@@ -1,0 +1,5 @@
+Flask
+pillow
+flask_cors
+numpy
+requests

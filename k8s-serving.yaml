@@ -1,0 +1,131 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fiveclass-serving
+  labels:
+    app: fiveclass-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fiveclass-serving
+  template:
+    metadata:
+      labels:
+        app: fiveclass-serving
+    spec:
+      volumes:
+      - name: fiveclass
+        hostPath:
+          path: /opt/model-export/fiveclass
+          type: Directory
+      containers:
+      - name: fiveclass-serving
+        image: tensorflow/serving
+        volumeMounts:
+        - mountPath: /models/fiveclass
+          name: fiveclass
+        ports:
+         - containerPort: 8501
+        env:
+          - name: MODEL_NAME
+            value: fiveclass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fiveclass-serving-svc
+spec:
+  selector:
+    app: fiveclass-serving
+  ports:
+  - port: 80
+    targetPort: 8501
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: neoplasm-serving
+  labels:
+    app: neoplasm-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neoplasm-serving
+  template:
+    metadata:
+      labels:
+        app: neoplasm-serving
+    spec:
+      volumes:
+      - name: neoplasm
+        hostPath:
+          path: /opt/model-export/neoplasm
+          type: Directory
+      containers:
+      - name: neoplasm-serving
+        image: tensorflow/serving
+        volumeMounts:
+        - mountPath: /models/neoplasm
+          name: neoplasm
+        ports:
+        - containerPort: 8501
+        env:
+        - name: MODEL_NAME
+          value: neoplasm
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neoplasm-serving-svc
+spec:
+  selector:
+    app: neoplasm-serving
+  ports:
+  - port: 80
+    targetPort: 8501
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: cancer-serving
+  labels:
+    app: cancer-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cancer-serving
+  template:
+    metadata:
+      labels:
+        app: cancer-serving
+    spec:
+      volumes:
+      - name: cancer
+        hostPath:
+          path: /opt/model-export/cancer
+          type: Directory
+      containers:
+      - name: cancer-serving
+        image: tensorflow/serving
+        volumeMounts:
+        - mountPath: /models/cancer
+          name: cancer
+        ports:
+        - containerPort: 8501
+        env:
+        - name: MODEL_NAME
+          value: cancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cancer-serving-svc
+spec:
+  selector:
+    app: cancer-serving
+  ports:
+  - port: 80
+    targetPort: 8501

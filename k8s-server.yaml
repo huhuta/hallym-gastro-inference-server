@@ -1,0 +1,32 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: gastro-server
+  labels:
+    app: gastro-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gastro-server
+  template:
+    metadata:
+      labels:
+        app: gastro-server
+    spec:
+      containers:
+      - name: gastro-server
+        image: huhuta/gastro-server
+        ports:
+         - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gastro-server-svc
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: gastro-server
